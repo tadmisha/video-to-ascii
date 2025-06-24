@@ -207,7 +207,7 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
-# Video formats
+# Video extensions
 *.mp4
 *.mov
 *.webm
@@ -215,6 +215,12 @@ __marimo__/
 *.ogg
 *.avi
 *.flv
+
+# Image extensions
+*.jpg
+*.jpeg
+*.png
+*.webp
 
 .history
 .vscode
