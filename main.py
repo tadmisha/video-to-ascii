@@ -9,7 +9,7 @@ ascii_darkness = {' ': 0, '`': 0.0751, '.': 0.0829, '-': 0.0848, "'": 0.1227, ':
 
 #& Function that splits the number n in k amount of numbers with them being int and then spreads them evenly in a list
 #& Example: input: n=81, k=13 output: [7, 6, 6, 6, 7, 6, 6, 6, 6, 7, 6, 6, 6]
-def split_and_spread(n, k):
+def split_and_spread(n: int , k: int) -> list[int]:
     base = n // k
     add = n % k
 
@@ -39,10 +39,30 @@ def to_grayscale(img: numpy.ndarray) -> numpy.ndarray:
     return gray_img
 
 
+#& Shrink width of image to needed
+def shrink_w(gray_img: numpy.ndarray, new_w: int) -> numpy.ndarray:
+    current_h = len(gray_img)
+    current_w = len(gray_img[0])
+
+    spread = split_and_spread(current_w, new_w)
+
+    for row_i in range(current_h):
+        i=0
+        for s in spread:
+            gray_img[row_i][i:s+1]=sum(gray_img[row_i][i:s+i])/s
+        i+=1
+    
+    return gray_img
+
+
+
+
 
 
 
 def main():
+    new_w = 200
+    
     path = "image.png"
     if not check_path(path):
         print("Couldn't open the file")
@@ -50,7 +70,9 @@ def main():
     
     img = cv2.imread(path)
     gray_img = to_grayscale(img)
-    print(len(gray_img.tolist()[0]))
+    small = cv2.resize(gray_img, (0,0), fx=, fy=0.25) 
+    cv2.imshow("s",small)
+    cv2.waitKey(0)
 
 
     
