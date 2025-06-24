@@ -1,5 +1,6 @@
 import pathlib
 import cv2
+import numpy
 
 #! Making image to ascii for now, proceed to video when finished
 
@@ -12,13 +13,23 @@ def check_path(path: str) -> bool:
     if not pathlib.Path(path).exists():
         return False
     return True
-    
+
+
+def to_grayscale(img: numpy.ndarray) -> numpy.ndarray:
+    gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    return gray_img
+
 
 def main():
     path = "image.png"
     if not check_path(path):
         print("Couldn't open the file")
         return False
+    
+    img = cv2.imread(path)
+    gray_img = to_grayscale(img)
+
+    
 
 if (__name__ == "__main__"):
     main()
