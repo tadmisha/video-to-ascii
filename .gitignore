@@ -222,6 +222,8 @@ __marimo__/
 *.png
 *.webp
 
+try*.py
+
 .history
 .vscode
 
