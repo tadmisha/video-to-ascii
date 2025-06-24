@@ -208,13 +208,13 @@ marimo/_lsp/
 __marimo__/
 
 # Video formats
-.mp4
-.mov
-.webm
-.mpg
-.ogg
-.avi
-.flv
+*.mp4
+*.mov
+*.webm
+*.mpg
+*.ogg
+*.avi
+*.flv
 
 .history
 .vscode
