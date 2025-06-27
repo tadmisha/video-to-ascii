@@ -228,8 +228,7 @@ __marimo__/
 
 try*.py
 
-ascii_videos/*
-!ascii_videos/.gitkeep
+ascii_videos/*/
 
 .history
 .vscode
