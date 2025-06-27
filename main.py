@@ -1,6 +1,8 @@
+import argparse
 import pathlib
 import cv2
 import numpy
+from time import sleep
 
 #! Making image to ascii for now, proceed to video when finished
 
@@ -26,7 +28,7 @@ def to_grayscale(img: numpy.ndarray) -> numpy.ndarray:
 
 
 #& Function that turns an image to ASCII art
-def image_to_ascii(img: numpy.ndarray, new_width: int = 200) -> str:
+def image_to_ascii(img: numpy.ndarray, new_width: int = 100) -> str:
     gray_img = to_grayscale(img)
 
     print("Converted image to grayscale")
@@ -57,19 +59,43 @@ def image_to_ascii(img: numpy.ndarray, new_width: int = 200) -> str:
 
 
 #& Main function
-def main():
-    path = "video.mp4"
-
+def main(path: str, width: int):
     if not check_path(path):
         print("Couldn't open the file")
         return False
     
-    img = cv2.imread(path)
+    cap = cv2.VideoCapture(path)
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    frame_delay = 1/fps
 
-    print("Opened the file succesfully")
+    if not cap.isOpened():
+        print("Couldn't open the file")
+        return False
 
-    ascii_str = image_to_ascii(img)
+    frames_ascii = []
+
+    frame_idx = -1
+    while cap.isOpened():
+        frame_idx+=1
+        ret, frame = cap.read()
+        if not ret:
+            break
+        frames_ascii.append(image_to_ascii(frame, width))
+        print(f"Frame N{frame_idx}")
+
+    for frame_ascii in frames_ascii:
+        print('\n'*100)
+        print(frame_ascii)
+        sleep(frame_delay)
+
+        
+        
 
 
 if (__name__ == "__main__"):
-    main()
+    parser = argparse.ArgumentParser(description="Convert video to ASCII art")
+    parser.add_argument("--path", type=str, required=True, help="Path to the video file")
+    parser.add_argument("--width", type=int, default=100, help="Width of ASCII output")
+    args = parser.parse_args()
+
+    main(args.path, args.width)
