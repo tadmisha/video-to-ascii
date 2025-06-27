@@ -30,20 +30,10 @@ def to_grayscale(img: numpy.ndarray) -> numpy.ndarray:
 #& Function that turns an image to ASCII art
 def image_to_ascii(img: numpy.ndarray, new_width: int = 100) -> str:
     gray_img = to_grayscale(img)
-
-    print("Converted image to grayscale")
-
     new_height = int(new_width*len(gray_img)/1.5//len(gray_img[0]))
-
-    print(f"Height: {new_height} symbols")
-
     resized_gray_img = cv2.resize(gray_img, (new_width, new_height))
     
-    
     ascii_str = ""
-    
-    print("Started the conversion")
-
     for row in range(new_height):
         for col in range(new_width):
             darkness = resized_gray_img[row][col]/255
@@ -53,13 +43,16 @@ def image_to_ascii(img: numpy.ndarray, new_width: int = 100) -> str:
                     break
         ascii_str+='\n'
 
-    print("Finished the conversion")
-
     return ascii_str
 
 
 #& Main function
-def main(path: str, width: int):
+def main(path: str, width: int, save: bool, play: bool):
+    if not (save or play):
+        print("Warning: neither --save nor --play specified. Output will be discarded.")
+        if input("Do you want to continue? Type anything if not: "):
+            return
+
     if not check_path(path):
         print("Couldn't open the file")
         return False
@@ -81,21 +74,35 @@ def main(path: str, width: int):
         if not ret:
             break
         frames_ascii.append(image_to_ascii(frame, width))
-        print(f"Frame N{frame_idx}")
+        print(f"Frame N{frame_idx} converted")
+    
+    if save:
+        folder_name = path.split('.')[0]
+        if pathlib.Path(f"ascii_videos/{folder_name}").exists():
+            i = 1
+            folder_name=f"{folder_name}{i}"
+            while pathlib.Path(f"ascii_videos/{folder_name}").exists():
+                folder_name=f"{folder_name[:-(len(str(i-1)))]}{i}"
+                i+=1
+        pathlib.Path(f"ascii_videos/{folder_name}").mkdir()
 
-    for frame_ascii in frames_ascii:
-        print('\n'*100)
-        print(frame_ascii)
-        sleep(frame_delay)
-
-        
-        
+        for idx in range(len(frames_ascii)):
+            with open(f"ascii_videos/{folder_name}/frame{idx}", 'w') as file:
+                file.write(frames_ascii[idx])
+    
+    if play:
+        for frame_ascii in frames_ascii:
+            print('\n'*100)
+            print(frame_ascii)
+            sleep(frame_delay)
 
 
 if (__name__ == "__main__"):
     parser = argparse.ArgumentParser(description="Convert video to ASCII art")
     parser.add_argument("--path", type=str, required=True, help="Path to the video file")
     parser.add_argument("--width", type=int, default=100, help="Width of ASCII output")
+    parser.add_argument("--save", action="store_true", help="Save ASCII frames to a folder")
+    parser.add_argument("--play", action="store_true", help="Play the video in the terminal")
     args = parser.parse_args()
 
-    main(args.path, args.width)
+    main(args.path, args.width, args.save, args.play)

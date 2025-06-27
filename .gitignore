@@ -226,6 +226,9 @@ __marimo__/
 
 try*.py
 
+ascii_videos/*
+!ascii_videos/.gitkeep
+
 .history
 .vscode
 
