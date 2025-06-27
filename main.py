@@ -86,6 +86,9 @@ def main(path: str, width: int, save: bool, play: bool):
                 i+=1
         pathlib.Path(f"ascii_videos/{folder_name}").mkdir()
 
+        with open(f"ascii_videos/{folder_name}/fps.txt", 'w') as file:
+            file.write(str(fps))
+
         for idx in range(len(frames_ascii)):
             with open(f"ascii_videos/{folder_name}/frame{idx}", 'w') as file:
                 file.write(frames_ascii[idx])
