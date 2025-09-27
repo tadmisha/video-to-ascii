@@ -1,15 +1,16 @@
-(ChatGPT generated)
 
-# Video to ASCII Art Converter
+# Video & Image to ASCII Art Converter
 
-This Python project converts video files into ASCII art frames. It can either save the frames as text files or play the ASCII video directly in the terminal.
+This Python project converts **video or image files** into ASCII art frames. It can either save the frames as text files or play the ASCII output directly in the terminal.
 
 ## Features
 
-- Converts video frames to ASCII art using custom grayscale mapping.
-- Supports common video formats (mp4, mov, webm, etc.).
+- Converts images or video frames to ASCII art using a custom grayscale mapping.
+- Supports common video formats (`.mp4`, `.mov`, `.webm`, `.avi`, etc.) and image formats (`.jpg`, `.png`, `.gif`, `.bmp`, etc.).
 - Optionally save ASCII frames to disk.
-- Optionally play ASCII video in the terminal.
+- Optionally play ASCII output in the terminal.
+- Handles corrupt or unsupported files gracefully.
+- Automatically creates unique folders when saving ASCII outputs to prevent overwriting.
 
 ## Requirements
 
@@ -28,32 +29,37 @@ pip install -r requirements.txt
 Run the script with the following command line options:
 
 ```
-python main.py --path <video_path> [--width WIDTH] [--save] [--play]
+python main.py --path <file_path> [--width WIDTH] [--save] [--play] [--video | --image]
 ```
 
-- `--path`: Path to the video file (required).
+- `--path`: Path to the image or video file (**required**).
 - `--width`: Width of the ASCII output (default: 100).
-- `--save`: Save ASCII frames as text files in `ascii_videos/<video_name>/` folder.
-- `--play`: Play the ASCII video in the terminal.
+- `--save`: Save ASCII frames as text files in `ascii_images/<image_name>/` or `ascii_videos/<video_name>/` folder.
+- `--play`: Play the ASCII output in the terminal.
+- `--video`: Convert a video file.
+- `--image`: Convert an image file.
+
+**Important:** You must specify either `--video` or `--image`, but not both.
 
 If neither `--save` nor `--play` is specified, the program will warn you and discard the output.
 
-## Example
+## Examples
 
-Convert and play video at width 120:
-
-```
-python main.py --path sample.mp4 --width 120 --play
-```
-
-Convert and save frames without playing:
+Convert and play a video at width 120:
 
 ```
-python main.py --path sample.mp4 --save
+python main.py --path sample.mp4 --width 120 --video --play
+```
+
+Convert and save an image without playing:
+
+```
+python main.py --path sample.jpg --image --save
 ```
 
 ## Notes
 
 - Make sure your terminal supports monospace fonts for proper display.
 - Larger widths increase resolution but require more processing time.
-- The program currently supports only local video files.
+- The program currently supports only local image/video files.
+- Videos are converted frame by frame; FPS information is saved in `fps.txt` if `--save` is used.
