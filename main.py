@@ -6,12 +6,14 @@ from time import sleep
 
 #! Making image to ascii for now, proceed to video when finished
 
-ascii_darkness = {0: ' ', 0.0751: '`', 0.0829: '.', 0.0848: '-', 0.1227: "'", 0.1403: ':', 0.1559: '_', 0.185: ',', 0.2183: '^', 0.2417: '=', 0.2571: ';', 0.2852: '>', 0.2902: '<', 0.2919: '+', 0.3099: '!', 0.3192: 'r', 0.3232: 'c', 0.3294: '*', 0.3384: '/', 0.3609: 'z', 0.3619: '?', 0.3667: 's', 0.3737: 'L', 0.3747: 'T', 0.3838: 'v', 0.3921: ')', 0.396: 'J', 0.3984: '7', 0.3993: '(', 0.4075: '|', 0.4091: 'F', 0.4101: 'i', 0.42: '{', 0.423: 'C', 0.4247: '}', 0.4274: 'f', 0.4293: 'I', 0.4328: '3', 0.4382: '1', 0.4385: 't', 0.442: 'l', 0.4473: 'u', 0.4477: '[', 0.4503: 'n', 0.4562: 'e', 0.458: 'o', 0.461: 'Z', 0.4638: '5', 0.4667: 'Y', 0.4686: 'x', 0.4693: 'j', 0.4703: 'y', 0.4833: 'a', 0.4881: ']', 0.4944: '2', 0.4953: 'E', 0.4992: 'S', 0.5509: 'w', 0.5567: 'q', 0.5569: 'k', 0.5591: 'P', 0.5602: 'h', 0.565: '9', 0.5776: 'd', 0.5777: '4', 0.5818: 'V', 0.587: 'p', 0.5972: 'O', 0.5999: 'G', 0.6043: 'b', 0.6049: 'U', 0.6093: 'A', 0.6099: 'K', 0.6465: 'X', 0.6561: 'H', 0.6595: 'm', 0.6631: '8', 0.6714: 'R', 0.6759: 'D', 0.6809: '#', 0.6816: '$', 0.6925: 'B', 0.7039: 'g', 0.7086: '0', 0.7235: 'M', 0.7302: 'N', 0.7332: 'W', 0.7602: 'Q', 0.7834: '%', 0.8037: '&', 1: '@'}
+ascii_darkness = {0.0: ' ', 0.0762: '`', 0.0851: '.', 0.0881: '-', 0.1271: "'", 0.1458: ':', 0.1624: '_', 0.1926: ',', 0.227: '^', 0.2515: '=', 0.268: ';', 0.2972: '>', 0.3033: '<', 0.3061: '+', 0.3252: '!', 0.3356: 'r', 0.3406: 'c', 0.3479: '*', 0.358: '/', 0.3816: 'z', 0.3837: '?', 0.3896: 's', 0.3977: 'L', 0.3998: 'T', 0.41: 'v', 0.4194: ')', 0.4244: 'J', 0.4278: '7', 0.4298: '(', 0.4391: '|', 0.4418: 'F', 0.4439: 'i', 0.4549: '{', 0.459: 'C', 0.4618: '}', 0.4656: 'f', 0.4686: 'I', 0.4732: '3', 0.4796: '1', 0.481: 't', 0.4856: 'l', 0.492: 'u', 0.4935: '[', 0.4972: 'n', 0.5042: 'e', 0.5071: 'o', 0.5112: 'Z', 0.5151: '5', 0.519: 'Y', 0.522: 'x', 0.5238: 'j', 0.5259: 'y', 0.54: 'a', 0.5459: ']', 0.5533: '2', 0.5553: 'E', 0.5603: 'S', 0.6131: 'w', 0.62: 'q', 0.6212: 'k', 0.6245: 'P', 0.6267: 'h', 0.6326: '9', 0.6463: 'd', 0.6475: '4', 0.6527: 'V', 0.659: 'p', 0.6703: 'O', 0.6741: 'G', 0.6795: 'b', 0.6812: 'U', 0.6867: 'A', 0.6884: 'K', 0.7261: 'X', 0.7368: 'H', 0.7413: 'm', 0.746: '8', 0.7554: 'R', 0.761: 'D', 0.7671: '#', 0.7688: '$', 0.7808: 'B', 0.7933: 'g', 0.7991: '0', 0.8151: 'M', 0.8229: 'N', 0.827: 'W', 0.8551: 'Q', 0.8794: '%', 0.9008: '&', 1: '@'}
 darknesses = list(ascii_darkness.keys())
 
 #& Checking if file exists & format is right
-def check_path(path: str) -> bool:
-    extensions = [".mp4", ".mov", ".webm", ".mpg", ".ogg", ".avi", ".flv"]
+def check_path(path: str, is_video: bool) -> bool:
+    extensions = [".mp4", ".mov", ".webm", ".mpg", ".ogg", ".avi", ".flv"] if is_video else \
+                 [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".tif", ".webp", ".svg"]
+
     if not any([path.endswith(ext) for ext in extensions]):
         return False
 
@@ -27,10 +29,13 @@ def to_grayscale(img: numpy.ndarray) -> numpy.ndarray:
     return gray_img
 
 
-#& Function that turns an image to ASCII art
+#& Function that turns an image to ascii art
 def image_to_ascii(img: numpy.ndarray, new_width: int = 100) -> str:
     gray_img = to_grayscale(img)
+
     new_height = int(new_width*len(gray_img)/1.5//len(gray_img[0]))
+    if new_height == 0: new_height = 1 # ? In extreme thin ratios cases
+
     resized_gray_img = cv2.resize(gray_img, (new_width, new_height))
     
     ascii_str = ""
@@ -45,27 +50,12 @@ def image_to_ascii(img: numpy.ndarray, new_width: int = 100) -> str:
 
     return ascii_str
 
-
-#& Main function
-def main(path: str, width: int, save: bool, play: bool):
-    if not (save or play):
-        print("Warning: neither --save nor --play specified. Output will be discarded.")
-        if input("Do you want to continue? Type anything if not: "):
-            return
-
-    if not check_path(path):
-        print("Couldn't open the file")
-        return False
-    
-    cap = cv2.VideoCapture(path)
-    fps = cap.get(cv2.CAP_PROP_FPS)
-    frame_delay = 1/fps
-
-    if not cap.isOpened():
-        print("Couldn't open the file")
-        return False
-
+#& Function that converts video to ascii frame by frame
+def video_to_ascii(cap: cv2.VideoCapture, new_width: int = 100):
     frames_ascii = []
+    frames_len = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+    print()
 
     frame_idx = -1
     while cap.isOpened():
@@ -73,27 +63,84 @@ def main(path: str, width: int, save: bool, play: bool):
         ret, frame = cap.read()
         if not ret:
             break
-        frames_ascii.append(image_to_ascii(frame, width))
-        print(f"Frame N{frame_idx} converted")
+        frames_ascii.append(image_to_ascii(frame, new_width))
+        print(f"Progress - {frame_idx/frames_len*100:.2f}%\n")
+        print(f"Frame N{frame_idx}/{frames_len} converted")
+        print("\033[F"*3, end='')
     
-    if save:
-        folder_name = path.split('.')[0]
-        if pathlib.Path(f"ascii_videos/{folder_name}").exists():
-            i = 1
-            folder_name=f"{folder_name}{i}"
-            while pathlib.Path(f"ascii_videos/{folder_name}").exists():
-                folder_name=f"{folder_name[:-(len(str(i-1)))]}{i}"
-                i+=1
-        pathlib.Path(f"ascii_videos/{folder_name}").mkdir()
+    return frames_ascii
 
-        with open(f"ascii_videos/{folder_name}/fps.txt", 'w') as file:
-            file.write(str(fps))
 
+#& Creates a directory for converted to ascii image/video to be saved in and returns the path to it
+def makedir_for_saving_ascii(path: str, is_video: bool) -> str:
+    base_folder = "ascii_" + ("videos" if is_video else "images")
+
+    folder_name = pathlib.Path(path).stem 
+    if pathlib.Path(f"{base_folder}/{folder_name}").exists():
+        i = 1
+        folder_name=f"{folder_name}{i}"
+        while pathlib.Path(f"{base_folder}/{folder_name}").exists():
+            folder_name=f"{folder_name[:-(len(str(i-1)))]}{i}"
+            i+=1
+
+    pathlib.Path(f"{base_folder}/{folder_name}").mkdir()
+
+    return f"{base_folder}/{folder_name}"
+
+
+#& Main function
+def main(is_video: bool, is_image: bool, path: str, width: int, save: bool, play: bool):
+    if not (is_image ^ is_video): # ! If nor --image nor --video were specified or both were
+        print("Choose either --video or --image to be converted.")
+        return
+
+    if not (save or play): # ! If nor --save nor --play were specified
+        print("Warning: neither --save nor --play specified. Output will be discarded.")
+        if input("Do you want to continue? Type anything if not: "):
+            return
+
+    if not check_path(path, is_video): # ! Checking if can open a file
+        print("Couldn't open the file")
+        return False
+    
+    if is_image: # ! Converting if input is an image
+        img = cv2.imread(path)
+        if img is None:
+            print("Cannot convert a corrupt file.")
+            return
+
+        frames_ascii = [image_to_ascii(img, width)]
+        frame_delay = 0
+    
+    if is_video: # ! Converting if input is a video
+        cap = cv2.VideoCapture(path)
+
+        fps = cap.get(cv2.CAP_PROP_FPS)
+
+        if fps == 0: # ? If some weird metadata issue when fps = 0
+            fps = 30
+
+        frame_delay = 1/fps
+
+        if not cap.isOpened():
+            print("Couldn't open the file")
+            return False
+
+        frames_ascii = video_to_ascii(cap, width)
+    
+    if save: # ! Saving
+        savepath = makedir_for_saving_ascii(path, is_video)
+
+        if is_video: # ? Saving fps if video
+            with open(f"{savepath}/fps.txt", 'w') as file:
+                file.write(str(fps))
+
+        # ? Saving all the frames
         for idx in range(len(frames_ascii)):
-            with open(f"ascii_videos/{folder_name}/frame{idx}", 'w') as file:
+            with open(f"{savepath}/frame{idx}", 'w') as file:
                 file.write(frames_ascii[idx])
     
-    if play:
+    if play: # ! Playing
         for frame_ascii in frames_ascii:
             print('\n'*100)
             print(frame_ascii)
@@ -102,10 +149,12 @@ def main(path: str, width: int, save: bool, play: bool):
 
 if (__name__ == "__main__"):
     parser = argparse.ArgumentParser(description="Convert video to ASCII art")
-    parser.add_argument("--path", type=str, required=True, help="Path to the video file")
+    parser.add_argument("--path", type=str, required=True, help="Path to the image/video file")
     parser.add_argument("--width", type=int, default=100, help="Width of ASCII output")
-    parser.add_argument("--save", action="store_true", help="Save ASCII frames to a folder")
-    parser.add_argument("--play", action="store_true", help="Play the video in the terminal")
+    parser.add_argument("--save", action="store_true", help="Save ASCII frame(s) to a folder")
+    parser.add_argument("--play", action="store_true", help="Play the image/video in the terminal")
+    parser.add_argument("--video", action="store_true", help="Convert a video")
+    parser.add_argument("--image", action="store_true", help="Convert an image")
     args = parser.parse_args()
 
-    main(args.path, args.width, args.save, args.play)
+    main(args.video, args.image, args.path, args.width, args.save, args.play)

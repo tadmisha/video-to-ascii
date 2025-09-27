@@ -224,11 +224,14 @@ __marimo__/
 *.png
 *.webp
 
-*.txt
+# Only ignore .txt in the root directory except requirements.txt
+/*.txt
+!requirements.txt
 
 try*.py
 
 ascii_videos/*/
+ascii_images/*/
 
 .history
 .vscode
