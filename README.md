@@ -1,4 +1,3 @@
-
 # Video & Image to ASCII Art Converter
 
 This Python project converts **video or image files** into ASCII art frames. It can either save the frames as text files or play the ASCII output directly in the terminal.
@@ -29,10 +28,11 @@ pip install -r requirements.txt
 Run the script with the following command line options:
 
 ```
-python main.py --path <file_path> [--width WIDTH] [--save] [--play] [--video | --image]
+python main.py --srcpath <file_path> [--dstpath <destination_path>] [--width WIDTH] [--save] [--play] [--video | --image]
 ```
 
-- `--path`: Path to the image or video file (**required**).
+- `--srcpath`: Path to the image or video file (**required**).
+- `--dstpath`: Destination directory to save ASCII output (default: `ascii_images/` or `ascii_videos/`).
 - `--width`: Width of the ASCII output (default: 100).
 - `--save`: Save ASCII frames as text files in `ascii_images/<image_name>/` or `ascii_videos/<video_name>/` folder.
 - `--play`: Play the ASCII output in the terminal.
@@ -48,13 +48,13 @@ If neither `--save` nor `--play` is specified, the program will warn you and dis
 Convert and play a video at width 120:
 
 ```
-python main.py --path sample.mp4 --width 120 --video --play
+python main.py --srcpath sample.mp4 --width 120 --video --play
 ```
 
 Convert and save an image without playing:
 
 ```
-python main.py --path sample.jpg --image --save
+python main.py --srcpath sample.jpg --image --save
 ```
 
 ## Notes

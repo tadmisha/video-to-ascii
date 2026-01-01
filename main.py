@@ -72,39 +72,48 @@ def video_to_ascii(cap: cv2.VideoCapture, new_width: int = 100):
 
 
 #& Creates a directory for converted to ascii image/video to be saved in and returns the path to it
-def makedir_for_saving_ascii(path: str, is_video: bool) -> str:
-    base_folder = "ascii_" + ("videos" if is_video else "images")
-
+def makedir_for_saving_ascii(path: str, dest_folder: str) -> str:
     folder_name = pathlib.Path(path).stem 
-    if pathlib.Path(f"{base_folder}/{folder_name}").exists():
+    if pathlib.Path(f"{dest_folder}/{folder_name}").exists():
         i = 1
         folder_name=f"{folder_name}{i}"
-        while pathlib.Path(f"{base_folder}/{folder_name}").exists():
+        while pathlib.Path(f"{dest_folder}/{folder_name}").exists():
             folder_name=f"{folder_name[:-(len(str(i-1)))]}{i}"
             i+=1
 
-    pathlib.Path(f"{base_folder}/{folder_name}").mkdir()
+    pathlib.Path(f"{dest_folder}/{folder_name}").mkdir()
 
-    return f"{base_folder}/{folder_name}"
+    return f"{dest_folder}/{folder_name}"
 
 
 #& Main function
-def main(is_video: bool, is_image: bool, path: str, width: int, save: bool, play: bool):
-    if not (is_image ^ is_video): # ! If nor --image nor --video were specified or both were
+def main(is_video: bool, is_image: bool, srcpath: str, dstpath: str, width: int, save: bool, play: bool):
+    if not (is_image ^ is_video): # ! If --image and --video flags are XNORed (Program exits)
         print("Choose either --video or --image to be converted.")
-        return
+        return 1
 
-    if not (save or play): # ! If nor --save nor --play were specified
+    if not (save or play): # ! If nor --save nor --play were specified (Warning)
         print("Warning: neither --save nor --play specified. Output will be discarded.")
         if input("Do you want to continue? Type anything if not: "):
-            return
+            return 1
 
-    if not check_path(path, is_video): # ! Checking if can open a file
+    if dstpath is None: # ? If destination path is not specified - default is None
+        dstpath = "ascii_" + ("videos" if is_video else "images")
+        print(dstpath)
+        if not pathlib.Path(dstpath).exists():
+            pathlib.Path(dstpath).mkdir()
+
+    if not pathlib.Path(dstpath).exists():
+        print("Destination path does not exist")
+        return 1
+
+    if not check_path(srcpath, is_video): # ! Checking if can't open a file (Program exits)
         print("Couldn't open the file")
-        return False
+        return 1
+        
     
     if is_image: # ! Converting if input is an image
-        img = cv2.imread(path)
+        img = cv2.imread(srcpath)
         if img is None:
             print("Cannot convert a corrupt file.")
             return
@@ -113,7 +122,7 @@ def main(is_video: bool, is_image: bool, path: str, width: int, save: bool, play
         frame_delay = 0
     
     if is_video: # ! Converting if input is a video
-        cap = cv2.VideoCapture(path)
+        cap = cv2.VideoCapture(srcpath)
 
         fps = cap.get(cv2.CAP_PROP_FPS)
 
@@ -129,7 +138,7 @@ def main(is_video: bool, is_image: bool, path: str, width: int, save: bool, play
         frames_ascii = video_to_ascii(cap, width)
     
     if save: # ! Saving
-        savepath = makedir_for_saving_ascii(path, is_video)
+        savepath = makedir_for_saving_ascii(srcpath, dstpath)
 
         if is_video: # ? Saving fps if video
             with open(f"{savepath}/fps.txt", 'w') as file:
@@ -149,7 +158,8 @@ def main(is_video: bool, is_image: bool, path: str, width: int, save: bool, play
 
 if (__name__ == "__main__"):
     parser = argparse.ArgumentParser(description="Convert video to ASCII art")
-    parser.add_argument("--path", type=str, required=True, help="Path to the image/video file")
+    parser.add_argument("--srcpath", type=str, required=True, help="Path to the image/video file")
+    parser.add_argument("--dstpath", type=str, default=None, help="Path to save the result")
     parser.add_argument("--width", type=int, default=100, help="Width of ASCII output")
     parser.add_argument("--save", action="store_true", help="Save ASCII frame(s) to a folder")
     parser.add_argument("--play", action="store_true", help="Play the image/video in the terminal")
@@ -157,4 +167,4 @@ if (__name__ == "__main__"):
     parser.add_argument("--image", action="store_true", help="Convert an image")
     args = parser.parse_args()
 
-    main(args.video, args.image, args.path, args.width, args.save, args.play)
+    main(args.video, args.image, args.srcpath, args.dstpath, args.width, args.save, args.play)
