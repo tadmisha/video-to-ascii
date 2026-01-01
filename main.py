@@ -137,7 +137,7 @@ def main(is_video: bool, is_image: bool, path: str, width: int, save: bool, play
 
         # ? Saving all the frames
         for idx in range(len(frames_ascii)):
-            with open(f"{savepath}/frame{idx}", 'w') as file:
+            with open(f"{savepath}/frame{idx}.txt", 'w') as file:
                 file.write(frames_ascii[idx])
     
     if play: # ! Playing
